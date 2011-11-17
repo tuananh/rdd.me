@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RDD.ME Link Shortener</title>
+  <script type="text/javascript" charset="utf-8">
+    var getShortUrl = function(url) {
+      var rdd_endpoint = "https://readability.com/api/shortener/v1/urls/";
+ // + encodeURIComponent(url);
+           xhr = new XMLHttpRequest(),
+           responseJsonHandler = function(json){
+             if (json.success == "false"){
+               alert("An error occurred: " + json.messages);
+             } else {
+               prompt('RDD.ME to this page:', json.meta.rdd_url);
+				// alert("Short link: " + json.meta.rdd_url)
+             }
+           };
+       xhr.open("POST", rdd_endpoint, true);
+       xhr.onload = function() {
+         responseJsonHandler(eval("(" + xhr.responseText + ")"));
+       };
+		var params ="url=" + encodeURIComponent(url);
+	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+       xhr.send(params);
+
+    };
+	
+    var validateHandler = function(e){
+      if (e.command == 'shorten'){
+        e.target.disabled = !safari.application.activeBrowserWindow.activeTab.url;
+      }
+    };
+    
+    var commandHandler = function(e){
+      if (e.command == "shorten"){
+        getShortUrl(safari.application.activeBrowserWindow.activeTab.url);
+      }
+    };
+    
+    safari.application.addEventListener("validate", validateHandler, false);
+    safari.application.addEventListener("command", commandHandler, false);
+  </script>
+</head>
+<body></body>
+</html>
